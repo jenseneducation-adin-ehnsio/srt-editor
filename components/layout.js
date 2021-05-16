@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import styles from './layout.module.scss';
 
-const Layout = (props) => <div className={styles.container}>{props.children}</div>;
+const Layout = (props) => <div className={styles.app}>{props.children}</div>;
 
 Layout.propTypes = {
   children: PropTypes.node

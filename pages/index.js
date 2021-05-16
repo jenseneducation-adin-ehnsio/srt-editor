@@ -1,204 +1,130 @@
+/* eslint-disable jsx-a11y/media-has-caption */
 import Head from 'next/head';
-import Link from 'next/link';
+import { useState, useEffect } from 'react';
+// import { createFFmpeg, fetchFile } from '@ffmpeg/ffmpeg';
+// const ffmpeg = createFFmpeg({ log: true });
 
 export default function Home() {
-  return (
-    <div className="container">
+  const [ready, setReady] = useState(true);
+  const [video, setVideo] = useState();
+  const [from, setFrom] = useState();
+  // const [to, setTo] = useState();
+  // const [altSource, setSource] = useState();
+
+  // const load = async () => {
+  //   await ffmpeg.load();
+  //   setReady(true);
+  // };
+
+  // useEffect(() => {
+  //   load();
+  // }, []);
+
+  useEffect(() => {
+    if (video) {
+      if (video.type === 'video/webm') {
+        setFrom('webm');
+        // setTo('mp4');
+      } else {
+        setFrom('mp4');
+        // setTo('webm');
+      }
+    }
+  }, [video]);
+
+  // useEffect(() => {
+  //   if (to) {
+  //     convert();
+  //   }
+  // }, [to]);
+
+  // const convert = async () => {
+  //   //Writing file to memory
+  //   ffmpeg.FS('writeFile', `video.${from}`, await fetchFile(video));
+
+  //   //Convert to webm
+  //   await ffmpeg.run('-i', `video.${from}`, '-f', to, `out.${to}`);
+
+  //   //Read file
+  //   const data = ffmpeg.FS('readFile', `out.${to}`);
+
+  //   //Create a URL
+  //   const url = URL.createObjectURL(new Blob([data.buffer], { type: `video/${to}` }));
+
+  //   //SetSources
+  //   setSource(url);
+  // };
+
+  return ready ? (
+    <div className="app">
       <Head>
         <title>SRT Editor</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <main>
-        <h1 className="title">
-          Read{' '}
-          <Link href="/edit">
-            <a>this page!</a>
-          </Link>
-        </h1>
-
-        <p className="description">
-          Get started by editing <code>pages/index.js</code>
-        </p>
-
-        <div className="grid">
-          <a href="https://nextjs.org/docs" className="card">
-            <h3>Documentation &rarr;</h3>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a href="https://nextjs.org/learn" className="card">
-            <h3>Learn &rarr;</h3>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a href="https://github.com/vercel/next.js/tree/master/examples" className="card">
-            <h3>Examples &rarr;</h3>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/import?filter=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className="card">
-            <h3>Deploy &rarr;</h3>
-            <p>Instantly deploy your Next.js site to a public URL with Vercel.</p>
-          </a>
-        </div>
+        {video && (
+          <video controls src={URL.createObjectURL(video)}>
+            <source src={URL.createObjectURL(video)} type={`video/${from}`}></source>
+            {/* {altSource && <source src={altSource} type={`video/${to}`}></source>} */}
+          </video>
+        )}
+        {!video && (
+          <label htmlFor="upload">
+            <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+              <path
+                fill="#D0E2FF"
+                d="M51.2,-67.8C63.2,-61.7,67.7,-42.6,70.7,-25C73.7,-7.3,75.3,8.8,71.4,23.9C67.5,39,58.1,53.1,45.3,63.3C32.5,73.5,16.3,79.8,2.8,76C-10.7,72.1,-21.4,58.2,-34.4,48C-47.3,37.9,-62.5,31.6,-69.7,20.1C-76.9,8.7,-76.2,-7.9,-68.7,-19.6C-61.1,-31.3,-46.9,-38.1,-34.3,-44C-21.7,-49.8,-10.9,-54.8,4.4,-60.8C19.6,-66.8,39.2,-73.8,51.2,-67.8Z"
+                transform="translate(100 100)"
+              />
+            </svg>
+            <input
+              id="upload"
+              accept="video/*"
+              type="file"
+              onChange={(e) => setVideo(e.target.files?.item(0))}
+            />
+            <h3>Add Video +</h3>
+          </label>
+        )}
       </main>
 
-      <footer>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer">
-          Powered by <img src="/vercel.svg" alt="Vercel Logo" className="logo" />
-        </a>
-      </footer>
-
       <style jsx>{`
-        .container {
-          min-height: 100vh;
-          padding: 0 0.5rem;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-        }
-
         main {
-          padding: 5rem 0;
-          flex: 1;
+          width: 100vw;
+          min-height: 100vh;
           display: flex;
+          align-items: center;
           flex-direction: column;
-          justify-content: center;
-          align-items: center;
-        }
-
-        footer {
-          width: 100%;
-          height: 100px;
-          border-top: 1px solid #eaeaea;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-        }
-
-        footer img {
-          margin-left: 0.5rem;
-        }
-
-        footer a {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-        }
-
-        a {
-          color: inherit;
-          text-decoration: none;
-        }
-
-        .title a {
-          color: #0070f3;
-          text-decoration: none;
-        }
-
-        .title a:hover,
-        .title a:focus,
-        .title a:active {
-          text-decoration: underline;
-        }
-
-        .title {
-          margin: 0;
-          line-height: 1.15;
-          font-size: 4rem;
-        }
-
-        .title,
-        .description {
-          text-align: center;
-        }
-
-        .description {
-          line-height: 1.5;
-          font-size: 1.5rem;
-        }
-
-        code {
-          background: #fafafa;
-          border-radius: 5px;
-          padding: 0.75rem;
-          font-size: 1.1rem;
-          font-family: Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono,
-            Bitstream Vera Sans Mono, Courier New, monospace;
-        }
-
-        .grid {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          flex-wrap: wrap;
-
-          max-width: 800px;
-          margin-top: 3rem;
-        }
-
-        .card {
-          margin: 1rem;
-          flex-basis: 45%;
-          padding: 1.5rem;
-          text-align: left;
-          color: inherit;
-          text-decoration: none;
-          border: 1px solid #eaeaea;
-          border-radius: 10px;
-          transition: color 0.15s ease, border-color 0.15s ease;
-        }
-
-        .card:hover,
-        .card:focus,
-        .card:active {
-          color: #0070f3;
-          border-color: #0070f3;
-        }
-
-        .card h3 {
-          margin: 0 0 1rem 0;
-          font-size: 1.5rem;
-        }
-
-        .card p {
-          margin: 0;
-          font-size: 1.25rem;
-          line-height: 1.5;
-        }
-
-        .logo {
-          height: 1em;
-        }
-
-        @media (max-width: 600px) {
-          .grid {
+          padding: 10px;
+          input {
+            width: 200px;
+          }
+          video {
             width: 100%;
-            flex-direction: column;
+          }
+          label {
+            position: relative;
+            svg {
+              width: 100%;
+            }
+            input {
+              display: none;
+            }
+            h3 {
+              position: absolute;
+              margin: 0;
+              top: 50%;
+              left: 50%;
+              transform: translate(-50%, -50%);
+              text-align: center;
+              white-space: nowrap;
+            }
           }
         }
       `}</style>
-
-      <style jsx global>{`
-        html,
-        body {
-          padding: 0;
-          margin: 0;
-          font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu,
-            Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
-        }
-
-        * {
-          box-sizing: border-box;
-        }
-      `}</style>
     </div>
+  ) : (
+    <p>loading</p>
   );
 }
