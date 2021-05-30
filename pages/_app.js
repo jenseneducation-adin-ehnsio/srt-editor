@@ -1,13 +1,44 @@
-import PropTypes from 'prop-types';
 import '../styles/global.scss';
+import React from 'react';
+import App from 'next/app';
+import Store from '../components/Store';
+import Router from 'next/router';
 
-const App = ({ Component, pageProps }) => {
-  return <Component {...pageProps} />;
-};
+export default class MyApp extends App {
+  state = {
+    srtObject: null
+  };
 
-App.propTypes = {
-  Component: PropTypes.elementType.isRequired,
-  pageProps: PropTypes.object
-};
+  componentDidMount = () => {
+    const srtJson = localStorage.getItem('srt');
+    const srt = JSON.parse(srtJson);
+    console.log(srt);
 
-export default App;
+    if (srt) {
+      this.setState({
+        srtObject: srt
+      });
+    }
+  };
+
+  setSrtObject = (srt) => {
+    const srtJson = JSON.stringify(srt);
+    localStorage.setItem('srt', srtJson);
+
+    this.setState({
+      srtObject: srt
+    });
+
+    Router.push('/edit');
+  }
+
+  render() {
+    const { Component, pageProps } = this.props;
+
+    return (
+      <Store.Provider value={{ srtObject: this.state.srtObject, setSrtObject: this.setSrtObject }}>
+        <Component {...pageProps} />
+      </Store.Provider>
+    );
+  }
+}
