@@ -8,7 +8,6 @@ export default function Edit() {
   const [videoSrc, setVideo] = useState();
   const [from, setFrom] = useState();
   const { srtObject } = useContext(Store);
-  const subtitles = document.getElementById('subtitles');
   const video = useRef({
     currentTime: 0
   });
@@ -24,6 +23,7 @@ export default function Edit() {
   }, [videoSrc]);
 
   const searchSrt = (time) => {
+    const subtitles = document.getElementById('subtitles');
     let found = srtObject.find((srt) => {
       return time >= calcTime(srt.startTime) && time <= calcTime(srt.endTime);
     });
@@ -31,7 +31,6 @@ export default function Edit() {
       subtitles.innerHTML = null;
       subtitles.insertAdjacentHTML('beforeend', '<i></i>');
     } else if (found && subtitles.innerHTML !== found.text) {
-      console.log(found.text)
       subtitles.innerHTML = null;
       subtitles.insertAdjacentHTML('beforeend', found.text);
     }
