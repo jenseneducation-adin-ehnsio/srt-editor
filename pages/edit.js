@@ -1,7 +1,6 @@
 /* eslint-disable jsx-a11y/media-has-caption */
 import Head from 'next/head';
-import { useState, useEffect, useRef } from 'react';
-import { useContext } from 'react';
+import { useState, useEffect, useRef, useContext } from 'react';
 import Store from '../components/Store';
 import parser from 'subtitles-parser';
 
@@ -9,6 +8,7 @@ export default function Edit() {
   const [videoSrc, setVideo] = useState();
   const [from, setFrom] = useState();
   const { srtObject } = useContext(Store);
+  const subtitles = document.getElementById('subtitles');
   const video = useRef({
     currentTime: 0
   });
@@ -23,11 +23,19 @@ export default function Edit() {
     }
   }, [videoSrc]);
 
-  // useEffect(() => {
-  //   if (video.current) {
-  //     console.log(video.current.currentTime);
-  //   }
-  // }, [video.current.currentTime]);
+  const searchSrt = (time) => {
+    let found = srtObject.find((srt) => {
+      return time >= calcTime(srt.startTime) && time <= calcTime(srt.endTime);
+    });
+    if (!found && subtitles.innerHTML !== '<i></i>') {
+      subtitles.innerHTML = null;
+      subtitles.insertAdjacentHTML('beforeend', '<i></i>');
+    } else if (found && subtitles.innerHTML !== found.text) {
+      console.log(found.text)
+      subtitles.innerHTML = null;
+      subtitles.insertAdjacentHTML('beforeend', found.text);
+    }
+  };
 
   const downloadSrt = (data, name) => {
     let file = new Blob([data], { type: 'text/html' });
@@ -50,7 +58,19 @@ export default function Edit() {
   const parseSrt = () => {
     let backToSrt = parser.toSrt(srtObject);
     downloadSrt(backToSrt, 'test.srt');
-    // console.log(video.current.currentTime);
+  };
+
+  const videoJump = (time) => {
+    let totalTime = calcTime(time);
+    video.current.currentTime = totalTime;
+  };
+
+  const calcTime = (time) => {
+    let timeArray = time.split(':');
+    let h = parseInt(timeArray[0]);
+    let m = parseInt(timeArray[1]);
+    let s = parseFloat(timeArray[2].replace(',', '.'));
+    return h * 3600 + m * 60 + s;
   };
 
   return (
@@ -61,12 +81,18 @@ export default function Edit() {
       </Head>
 
       <main>
-        {videoSrc && (
-          <video ref={video} controls src={URL.createObjectURL(videoSrc)}>
-            <source src={URL.createObjectURL(videoSrc)} type={`video/${from}`}></source>
-          </video>
-        )}
-        {!videoSrc && (
+        {videoSrc ? (
+          <div className="video_wrapper">
+            <div id="subtitles" className="subtitles"></div>
+            <video
+              controls
+              onTimeUpdate={(e) => searchSrt(e.target.currentTime)}
+              ref={video}
+              src={URL.createObjectURL(videoSrc)}>
+              <source src={URL.createObjectURL(videoSrc)} type={`video/${from}`}></source>
+            </video>
+          </div>
+        ) : (
           <label htmlFor="upload">
             <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
               <path
@@ -84,6 +110,18 @@ export default function Edit() {
             <h3>Add Video +</h3>
           </label>
         )}
+        {srtObject && (
+          <ul className="srt_list">
+            {srtObject.map((sub) => (
+              <li key={sub.id}>
+                <div className="srt_container" dangerouslySetInnerHTML={{ __html: sub.text }}></div>
+                <button onClick={() => videoJump(sub.startTime)}>
+                  {sub.id}: {sub.startTime}
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
         <button onClick={parseSrt}>download</button>
       </main>
 
@@ -98,8 +136,23 @@ export default function Edit() {
           input {
             width: 200px;
           }
-          video {
+          .video_wrapper {
             width: 100%;
+            position: relative;
+            video {
+              width: 100%;
+            }
+            .subtitles {
+              position: absolute;
+              bottom: 30px;
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              width: 100%;
+              i {
+                color: yellow;
+              }
+            }
           }
           label {
             position: relative;
@@ -117,6 +170,15 @@ export default function Edit() {
               transform: translate(-50%, -50%);
               text-align: center;
               white-space: nowrap;
+            }
+          }
+          .srt_list {
+            width: 100%;
+            height: 400px;
+            overflow-y: scroll;
+            .srt_container {
+              display: flex;
+              flex-direction: column;
             }
           }
         }

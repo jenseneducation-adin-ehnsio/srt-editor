@@ -12,7 +12,7 @@ export default class MyApp extends App {
   componentDidMount = () => {
     const srtJson = localStorage.getItem('srt');
     const srt = JSON.parse(srtJson);
-    console.log(srt);
+    console.log(srt)
 
     if (srt) {
       this.setState({
