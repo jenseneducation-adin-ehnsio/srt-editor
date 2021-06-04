@@ -1,44 +1,57 @@
 import '../styles/global.scss';
 import React from 'react';
-import App from 'next/app';
 import Store from '../components/Store';
 import Router from 'next/router';
+import { useEffect, useState } from 'react';
 
-export default class MyApp extends App {
-  state = {
-    srtObject: null
-  };
 
-  componentDidMount = () => {
+export default function App(props) {
+
+  const [srtObject, setSrtObject] = useState([]);
+
+  useEffect(() => {
     const srtJson = localStorage.getItem('srt');
     const srt = JSON.parse(srtJson);
-    console.log(srt)
+    console.log(srt);
 
     if (srt) {
-      this.setState({
-        srtObject: srt
-      });
+      setSrtObject(srt);
     }
-  };
+  }, []);
 
-  setSrtObject = (srt) => {
+  const saveSrtObject = (srt) => {
     const srtJson = JSON.stringify(srt);
     localStorage.setItem('srt', srtJson);
 
-    this.setState({
-      srtObject: srt
-    });
+    setSrtObject(srt);
 
     Router.push('/edit');
   }
 
-  render() {
-    const { Component, pageProps } = this.props;
+  const updateSrtObject = (texts, id) => {
+    let srtText = formatToSrt(texts);
+    let newArray = [...srtObject];
+    let index = srtObject.findIndex(s => s.id === id);
+    newArray[index].text = srtText;
+    setSrtObject(newArray);
+  }
+
+  const formatToSrt = (texts) => {
+    let newFormat = texts.map((text, index) => {
+      if(index === 0) {
+        return `<i>${text}</i>`
+      } else {
+        return `\n<i>${text}</i>`
+      }
+    })
+    return newFormat.join('');
+  }
+
+  const { Component, pageProps } = props;
 
     return (
-      <Store.Provider value={{ srtObject: this.state.srtObject, setSrtObject: this.setSrtObject }}>
+      <Store.Provider value={{ srtObject: srtObject, saveSrtObject: saveSrtObject, updateSrtObject: updateSrtObject }}>
         <Component {...pageProps} />
       </Store.Provider>
     );
-  }
 }

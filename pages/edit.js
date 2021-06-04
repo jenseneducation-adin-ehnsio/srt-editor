@@ -1,28 +1,21 @@
-/* eslint-disable jsx-a11y/media-has-caption */
 import Head from 'next/head';
-import { useState, useEffect, useRef, useContext } from 'react';
+import { useState, useRef, useContext } from 'react';
 import Store from '../components/Store';
+import SubList from '../components/SubList';
+import Video from '../components/Video';
 import parser from 'subtitles-parser';
 
 export default function Edit() {
   const [videoSrc, setVideo] = useState();
-  const [from, setFrom] = useState();
   const { srtObject } = useContext(Store);
   const video = useRef({
     currentTime: 0
   });
 
-  useEffect(() => {
-    if (videoSrc) {
-      if (videoSrc.type === 'video/webm') {
-        setFrom('webm');
-      } else {
-        setFrom('mp4');
-      }
-    }
-  }, [videoSrc]);
-
   const searchSrt = (time) => {
+    if(!time) {
+      time = video.current.currentTime;
+    }
     const subtitles = document.getElementById('subtitles');
     let found = srtObject.find((srt) => {
       return time >= calcTime(srt.startTime) && time <= calcTime(srt.endTime);
@@ -81,16 +74,7 @@ export default function Edit() {
 
       <main>
         {videoSrc ? (
-          <div className="video_wrapper">
-            <div id="subtitles" className="subtitles"></div>
-            <video
-              controls
-              onTimeUpdate={(e) => searchSrt(e.target.currentTime)}
-              ref={video}
-              src={URL.createObjectURL(videoSrc)}>
-              <source src={URL.createObjectURL(videoSrc)} type={`video/${from}`}></source>
-            </video>
-          </div>
+          <Video video={video} searchSrt={searchSrt} videoSrc={videoSrc}/>
         ) : (
           <label htmlFor="upload">
             <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
@@ -110,16 +94,7 @@ export default function Edit() {
           </label>
         )}
         {srtObject && (
-          <ul className="srt_list">
-            {srtObject.map((sub) => (
-              <li key={sub.id}>
-                <div className="srt_container" dangerouslySetInnerHTML={{ __html: sub.text }}></div>
-                <button onClick={() => videoJump(sub.startTime)}>
-                  {sub.id}: {sub.startTime}
-                </button>
-              </li>
-            ))}
-          </ul>
+          <SubList srtObject={srtObject} searchSrt={searchSrt} onPlay={videoJump} video={video} /> 
         )}
         <button onClick={parseSrt}>download</button>
       </main>
@@ -134,24 +109,6 @@ export default function Edit() {
           padding: 10px;
           input {
             width: 200px;
-          }
-          .video_wrapper {
-            width: 100%;
-            position: relative;
-            video {
-              width: 100%;
-            }
-            .subtitles {
-              position: absolute;
-              bottom: 30px;
-              display: flex;
-              flex-direction: column;
-              align-items: center;
-              width: 100%;
-              i {
-                color: yellow;
-              }
-            }
           }
           label {
             position: relative;
@@ -169,15 +126,6 @@ export default function Edit() {
               transform: translate(-50%, -50%);
               text-align: center;
               white-space: nowrap;
-            }
-          }
-          .srt_list {
-            width: 100%;
-            height: 400px;
-            overflow-y: scroll;
-            .srt_container {
-              display: flex;
-              flex-direction: column;
             }
           }
         }

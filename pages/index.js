@@ -7,7 +7,7 @@ import Store from '../components/Store';
 
 export default function Home() {
   const [srt, setSrt] = useState();
-  const { setSrtObject } = useContext(Store);
+  const { saveSrtObject } = useContext(Store);
 
   useEffect(() => {
     if (srt) {
@@ -15,8 +15,7 @@ export default function Home() {
       reader.onload = function (e) {
         let subs = e.target.result;
         let parsedSubs = parser.fromSrt(subs);
-        setSrtObject(parsedSubs);
-        // let backToSrt = parser.toSrt(parsedSubs);
+        saveSrtObject(parsedSubs);
       };
       reader.readAsText(srt);
     }
