@@ -29,7 +29,7 @@ export default function Edit() {
     setMirrorTime(time);
     const subtitles = document.getElementById('subtitles');
     let found = srtObject.find((srt) => {
-      return time >= calcTime(srt.startTime) && time <= calcTime(srt.endTime);
+      return time >= calcTime(srt.startTime, -0.8) && time <= calcTime(srt.endTime, 0);
     });
     if (!found && subtitles.innerHTML !== '<i></i>') {
       subtitles.innerHTML = null;
@@ -77,18 +77,19 @@ export default function Edit() {
 
   const onPlay = (time) => {
     setIsPlaying(true);
-    videoJump(time);
+    const offset = 0;
+    videoJump(time, offset);
   }
 
   const onEdit = (time) => {
     setIsPlaying(false);
-    videoJump(time);
+    const offset = 0.5;
+    videoJump(time, offset);
   }
 
-  const videoJump = (time) => {
-    console.log(time)
+  const videoJump = (time, offset) => {
     if(video.current) {
-      let totalTime = calcTime(time);
+      let totalTime = calcTime(time, offset);
       video.current.currentTime = totalTime;
     }
   };
@@ -121,11 +122,11 @@ export default function Edit() {
     video.current.currentTime = e.target.value;
   }
 
-  const calcTime = (time) => {
+  const calcTime = (time, offset) => {
     let timeArray = time.split(':');
     let h = parseInt(timeArray[0]);
     let m = parseInt(timeArray[1]);
-    let s = parseFloat(timeArray[2].replace(',', '.')) + 0.5;
+    let s = parseFloat(timeArray[2].replace(',', '.')) + offset;
     return h * 3600 + m * 60 + s;
   };
 
