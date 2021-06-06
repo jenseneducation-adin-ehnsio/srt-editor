@@ -7,13 +7,13 @@ import { useEffect, useState } from 'react';
 
 export default function App(props) {
 
-  const [srtObject, setSrtObject] = useState([]);
+  let [srtObject, setSrtObject] = useState([]);
+  let [currentId, setCurrentId] = useState();
 
   useEffect(() => {
     const srtJson = localStorage.getItem('srt');
     const srt = JSON.parse(srtJson);
-    console.log(srt);
-
+    console.log(srt)
     if (srt) {
       setSrtObject(srt);
     }
@@ -50,7 +50,14 @@ export default function App(props) {
   const { Component, pageProps } = props;
 
     return (
-      <Store.Provider value={{ srtObject: srtObject, saveSrtObject: saveSrtObject, updateSrtObject: updateSrtObject }}>
+      <Store.Provider 
+      value={{ 
+        srtObject: srtObject, 
+        saveSrtObject: saveSrtObject, 
+        updateSrtObject: updateSrtObject, 
+        setCurrentId: setCurrentId, 
+        currentId: currentId 
+        }}>
         <Component {...pageProps} />
       </Store.Provider>
     );

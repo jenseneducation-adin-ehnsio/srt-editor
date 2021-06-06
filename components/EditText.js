@@ -1,15 +1,16 @@
 import { useState, useEffect, useContext } from 'react';
 import Store from '../components/Store';
-import Video from './Video';
 
-export default function EditText({sub, searchSrt, onPlay, video}) {
+export default function EditText({sub, searchSrt, onEdit, video}) {
   const [edit, setEdit] = useState(false);
   const [texts, setTexts] = useState();
   const { updateSrtObject } = useContext(Store);
 
   useEffect(() => {
-    let srtArray = (sub.text.split('</i>'))
-    srtArray.pop();
+    let srtArray = (sub.text.split('</i>'));
+    if(srtArray.length > 1) {
+      srtArray.pop();
+    }
     let filtered = srtArray.map((srt) => {
       return srt.replace(/<i>|\n/g, '')
     })
@@ -21,13 +22,23 @@ export default function EditText({sub, searchSrt, onPlay, video}) {
     newArr[index] = str;
     setTexts(newArr);
     await updateSrtObject(newArr, sub.id);
-    searchSrt()
+    if(video.current) {
+      searchSrt();
+    }
   }
 
   const toggleEdit = () => {
     setEdit(!edit);
-    video.current.pause();
-    onPlay(sub.startTime);
+    if(video.current) {
+      video.current.pause();
+      onEdit(sub.startTime);
+    }
+  }
+
+  const handleKeyPress = (e) => {
+    if(e.key === 'Enter') {
+      toggleEdit();
+    };
   }
 
   return (
@@ -36,7 +47,7 @@ export default function EditText({sub, searchSrt, onPlay, video}) {
             <div className="srt_container" dangerouslySetInnerHTML={{ __html: sub.text }}></div>
           ) : (
             texts.map((text, i) => (
-              <input key={i} type="text" value={text} onChange={e => updateText(e.target.value, i)} />
+              <input key={i} type="text" value={text} onKeyPress={e => handleKeyPress(e)} onChange={e => updateText(e.target.value, i)} />
             ))
           )}
           <button onClick={() => toggleEdit()}>toggle</button>

@@ -1,5 +1,5 @@
 import Head from 'next/head';
-import { useState, useRef, useContext } from 'react';
+import { useState, useRef, useContext, useEffect } from 'react';
 import Store from '../components/Store';
 import SubList from '../components/SubList';
 import Video from '../components/Video';
@@ -7,15 +7,26 @@ import parser from 'subtitles-parser';
 
 export default function Edit() {
   const [videoSrc, setVideo] = useState();
-  const { srtObject } = useContext(Store);
-  const video = useRef({
-    currentTime: 0
-  });
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [mirrorTime, setMirrorTime] = useState();
+  const { srtObject, setCurrentId, currentId } = useContext(Store);
+  const video = useRef(null);
+
+  useEffect(() => {
+    if(video.current) {
+      if(isPlaying) {
+        video.current.play();
+      } else {
+        video.current.pause()
+      }
+    }
+  }, [isPlaying]);
 
   const searchSrt = (time) => {
     if(!time) {
       time = video.current.currentTime;
     }
+    setMirrorTime(time);
     const subtitles = document.getElementById('subtitles');
     let found = srtObject.find((srt) => {
       return time >= calcTime(srt.startTime) && time <= calcTime(srt.endTime);
@@ -24,8 +35,12 @@ export default function Edit() {
       subtitles.innerHTML = null;
       subtitles.insertAdjacentHTML('beforeend', '<i></i>');
     } else if (found && subtitles.innerHTML !== found.text) {
+      setCurrentId(found.id);
       subtitles.innerHTML = null;
       subtitles.insertAdjacentHTML('beforeend', found.text);
+    }
+    if(!found) {
+      setCurrentId(null);
     }
   };
 
@@ -52,16 +67,65 @@ export default function Edit() {
     downloadSrt(backToSrt, 'test.srt');
   };
 
-  const videoJump = (time) => {
-    let totalTime = calcTime(time);
-    video.current.currentTime = totalTime;
+  const playPause = () => {
+    if(!isPlaying) {
+      setIsPlaying(true);
+    } else {
+      setIsPlaying(false);
+    }
   };
+
+  const onPlay = (time) => {
+    setIsPlaying(true);
+    videoJump(time);
+  }
+
+  const onEdit = (time) => {
+    setIsPlaying(false);
+    videoJump(time);
+  }
+
+  const videoJump = (time) => {
+    console.log(time)
+    if(video.current) {
+      let totalTime = calcTime(time);
+      video.current.currentTime = totalTime;
+    }
+  };
+
+  const nextSub = () => {
+    let current = parseInt(currentId) + 1;
+    let next = srtObject.find((s) => {
+      return parseInt(s.id) === current
+    })
+    if(next) {
+      videoJump(next.startTime);
+    } else {
+      videoJump(srtObject[0].startTime);
+    }
+  }
+
+  const prevSub = () => {
+    let current = parseInt(currentId) - 1;
+    let prev = srtObject.find((s) => {
+      return parseInt(s.id) === current
+    })
+    if(next) {
+      videoJump(prev.startTime);
+    } else {
+      videoJump(srtObject[0].startTime);
+    }
+  }
+
+  const handleSliderChange = (e) => {
+    video.current.currentTime = e.target.value;
+  }
 
   const calcTime = (time) => {
     let timeArray = time.split(':');
     let h = parseInt(timeArray[0]);
     let m = parseInt(timeArray[1]);
-    let s = parseFloat(timeArray[2].replace(',', '.'));
+    let s = parseFloat(timeArray[2].replace(',', '.')) + 0.5;
     return h * 3600 + m * 60 + s;
   };
 
@@ -94,9 +158,28 @@ export default function Edit() {
           </label>
         )}
         {srtObject && (
-          <SubList srtObject={srtObject} searchSrt={searchSrt} onPlay={videoJump} video={video} /> 
+          <SubList srtObject={srtObject} searchSrt={searchSrt} onPlay={onPlay} onEdit={onEdit} video={video} /> 
         )}
-        <button onClick={parseSrt}>download</button>
+        {video.current && (
+          <div className="controls">
+            <div className="play_pause">
+              <p onClick={prevSub}>prev</p>
+              {!isPlaying ? (
+                <p onClick={playPause}>play</p>
+              ) : (
+                <p onClick={playPause}>pause</p>
+              )}
+              <p onClick={nextSub}>next</p>
+            </div>
+            <button onClick={parseSrt}>download</button>
+            <input 
+            type="range"
+            min="0" max={video.current.duration || "100"}
+            value={mirrorTime}
+            onChange={(e) => handleSliderChange(e)}
+            step="0.1"/>
+          </div>
+        )}
       </main>
 
       <style jsx scoped>{`
@@ -107,8 +190,22 @@ export default function Edit() {
           align-items: center;
           flex-direction: column;
           padding: 10px;
-          input {
-            width: 200px;
+          .controls {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            padding: 10px;
+            background-color: white;
+            .play_pause {
+              height: 60px;
+              width: 100%;
+              display: flex;
+              justify-content: space-evenly;
+              align-items: center;
+            }
+            input {
+              width: 100%;
+            }
           }
           label {
             position: relative;

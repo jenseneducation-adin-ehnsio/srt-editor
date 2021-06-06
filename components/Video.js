@@ -17,7 +17,6 @@ const [type, setType] = useState();
     <div className="video_wrapper">
       <div id="subtitles" className="subtitles"></div>
       <video
-        controls
         onTimeUpdate={(e) => searchSrt(e.target.currentTime)}
         ref={video}
         src={URL.createObjectURL(videoSrc)}>
