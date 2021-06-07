@@ -1,15 +1,21 @@
 import EditText from '../components/EditText'
 import Store from '../components/Store';
-import { useContext } from 'react';
+import { useContext, useRef, useEffect } from 'react';
 
 export default function SubList({onPlay, searchSrt, video, onEdit}) {
   const { srtObject } = useContext(Store);
   const { currentId } = useContext(Store);
+  const list = useRef(null);
+
+  useEffect(() => {
+    console.log(currentId)
+    console.log(list)
+  }, [currentId]);
 
   return (
-    <ul className="srt_list">
+    <ul ref={list} className="srt_list">
       {srtObject.map((sub) => (
-        <li key={sub.id} className={sub.id === currentId ? 'active' : null}>
+        <li  key={sub.id} className={sub.id === currentId ? 'active' : null}>
           <EditText searchSrt={searchSrt} sub={sub} onEdit={onEdit} video={video} />
           <button onClick={() => onPlay(sub.startTime)}>
             {sub.id}: {sub.startTime}

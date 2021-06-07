@@ -100,9 +100,9 @@ export default function Edit() {
       return parseInt(s.id) === current
     })
     if(next) {
-      videoJump(next.startTime);
+      videoJump(next.startTime, 0);
     } else {
-      videoJump(srtObject[0].startTime);
+      videoJump(srtObject[0].startTime, 0);
     }
   }
 
@@ -112,9 +112,9 @@ export default function Edit() {
       return parseInt(s.id) === current
     })
     if(next) {
-      videoJump(prev.startTime);
+      videoJump(prev.startTime, 0);
     } else {
-      videoJump(srtObject[0].startTime);
+      videoJump(srtObject[0].startTime, 0);
     }
   }
 
