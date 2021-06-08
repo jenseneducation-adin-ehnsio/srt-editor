@@ -185,12 +185,6 @@ export default function Edit() {
 
       <style jsx scoped>{`
         main {
-          width: 100vw;
-          min-height: 100vh;
-          display: flex;
-          align-items: center;
-          flex-direction: column;
-          padding: 10px;
           .controls {
             position: fixed;
             bottom: 0;

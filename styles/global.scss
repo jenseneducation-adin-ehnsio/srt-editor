@@ -1,3 +1,9 @@
+@import 'variables.scss';
+@import 'mixins.scss';
+@import 'responsive.scss';
+@import 'subtitles.scss';
+@import 'fonts.scss';
+
 * {
   box-sizing: border-box;
   scrollbar-width: none;
@@ -24,14 +30,4 @@ ul {
 
 ul {
   list-style-type: none;
-}
-
-.subtitles {
-  color: white;
-  font-size: 1.2rem;
-  i {
-    color: white;
-    font-size: 1.2rem;
-    background-color: rgba(0, 0, 0, 0.6);
-  }
 }

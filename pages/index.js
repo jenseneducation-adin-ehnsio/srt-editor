@@ -29,6 +29,7 @@ export default function Home() {
       </Head>
 
       <main>
+        <h1>Redigera dina undertexter</h1>
         <label htmlFor="upload">
           <img src="/blob.svg" alt="blob" />
           <input
@@ -37,18 +38,12 @@ export default function Home() {
             type="file"
             onChange={(e) => setSrt(e.target.files?.item(0))}
           />
-          <h3>Add SRT</h3>
+          <h3>Lägg till textfil</h3>
         </label>
       </main>
 
-      <style jsx>{`
+      <style jsx scoped>{`
         main {
-          width: 100vw;
-          min-height: 100vh;
-          display: flex;
-          align-items: center;
-          flex-direction: column;
-          padding: 10px;
           input {
             width: 200px;
           }
@@ -57,8 +52,10 @@ export default function Home() {
           }
           label {
             position: relative;
+            width: 100%;
+            max-width: 400px;
             img {
-              width: 100vw;
+              width: 100%;
             }
             input {
               display: none;

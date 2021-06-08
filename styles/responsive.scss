@@ -1,0 +1,31 @@
+@mixin phone {
+  @media (max-width: 767px) { @content; }
+}
+
+@mixin tablet {
+  @media (min-width: 768px) { @content }
+}
+
+@mixin desktop {
+  @media (min-width: 1152px) { @content }
+}
+
+#__next {
+  > div {
+    display: flex;
+    justify-content: center;
+    main {
+      max-width: 100vw;
+      width: 100vw;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+      padding: 10px;
+      @include desktop {
+        max-width: 1152px;
+      }
+    }
+  }
+}
+
