@@ -11,6 +11,7 @@ export default function Edit() {
   const [videoSrc, setVideo] = useState();
   const [isPlaying, setIsPlaying] = useState(false);
   const [mirrorTime, setMirrorTime] = useState();
+  const [videoLoaded, setVideoLoaded] = useState(false);
   const { srtObject, setCurrentId, currentId } = useContext(Store);
   const video = useRef(null);
 
@@ -23,6 +24,14 @@ export default function Edit() {
       }
     }
   }, [isPlaying]);
+
+  useEffect(() => {
+    if(videoSrc) {
+      setTimeout(() => {
+        setVideoLoaded(true);
+      }, 1000);
+    }
+  }, [videoSrc]);
 
   const searchSrt = (time) => {
     if(!time) {
@@ -154,7 +163,7 @@ export default function Edit() {
         {srtObject && (
           <SubList srtObject={srtObject} videoSrc={videoSrc} searchSrt={searchSrt} videoJump={videoJump} onEdit={onEdit} video={video} /> 
         )}
-        {video.current && (
+        {videoLoaded && (
           <Controls isPlaying={isPlaying} prevSub={prevSub} playPause={playPause} nextSub={nextSub} video={video} mirrorTime={mirrorTime} handleSliderChange={handleSliderChange} />
         )}
       </main>
