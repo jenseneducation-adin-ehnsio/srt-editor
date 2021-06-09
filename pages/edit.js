@@ -33,16 +33,17 @@ export default function Edit() {
     let found = srtObject.find((srt) => {
       return time >= calcTime(srt.startTime, -0.8) && time <= calcTime(srt.endTime, 0);
     });
-    if (!found && subtitles.innerHTML !== '<i></i>') {
+    if (subtitles && !found && subtitles.innerHTML !== '<i></i>') {
       subtitles.innerHTML = null;
       subtitles.insertAdjacentHTML('beforeend', '<i></i>');
-    } else if (found && subtitles.innerHTML !== found.text) {
-      setCurrentId(found.id);
+    } else if (subtitles && found && subtitles.innerHTML !== found.text) {
       subtitles.innerHTML = null;
       subtitles.insertAdjacentHTML('beforeend', found.text);
     }
-    if(!found) {
+    if(!found && subtitles) {
       setCurrentId(null);
+    } else {
+      setCurrentId(found.id);
     }
   };
 
@@ -77,12 +78,6 @@ export default function Edit() {
     }
   };
 
-  const onPlay = (time) => {
-    setIsPlaying(true);
-    const offset = 0;
-    videoJump(time, offset);
-  }
-
   const onEdit = (time) => {
     setIsPlaying(false);
     const offset = 0.5;
@@ -93,6 +88,8 @@ export default function Edit() {
     if(video.current) {
       let totalTime = calcTime(time, offset);
       video.current.currentTime = totalTime;
+    } else {
+      searchSrt(calcTime(time, 0));
     }
   };
 
@@ -154,7 +151,7 @@ export default function Edit() {
           </label>
         )}
         {srtObject && (
-          <SubList srtObject={srtObject} videoSrc={videoSrc} searchSrt={searchSrt} onPlay={onPlay} onEdit={onEdit} video={video} /> 
+          <SubList srtObject={srtObject} videoSrc={videoSrc} searchSrt={searchSrt} videoJump={videoJump} onEdit={onEdit} video={video} /> 
         )}
         {video.current && (
           <Controls isPlaying={isPlaying} prevSub={prevSub} playPause={playPause} nextSub={nextSub} parseSrt={parseSrt} video={video} mirrorTime={mirrorTime} handleSliderChange={handleSliderChange} />

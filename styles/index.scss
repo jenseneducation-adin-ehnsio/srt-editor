@@ -38,6 +38,7 @@
   }
   &_label {
     grid-area: label;
+    cursor: pointer;
     @include desktop {
       justify-content: flex-start !important;
       align-items: flex-start !important;

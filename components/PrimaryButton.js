@@ -1,7 +1,7 @@
-export default function Button({title}) {
+export default function Button({title, ...rootDomAttributes}) {
 
   return (
-    <button className="primary_button">
+    <button {...rootDomAttributes} className="primary_button">
       {title}
     </button>
   )

@@ -1,9 +1,11 @@
 import { useState, useEffect, useContext } from 'react';
 import Store from '../components/Store';
+import PrimaryButton from '../components/PrimaryButton';
 
 export default function EditText({sub, searchSrt, onEdit, video}) {
   const [edit, setEdit] = useState(false);
   const [texts, setTexts] = useState();
+  const [buttonText, setButtonText] = useState('redigera');
   const { updateSrtObject } = useContext(Store);
 
   useEffect(() => {
@@ -29,6 +31,11 @@ export default function EditText({sub, searchSrt, onEdit, video}) {
 
   const toggleEdit = () => {
     setEdit(!edit);
+    if(!edit) {
+      setButtonText('spara');
+    } else {
+      setButtonText('redigera');
+    }
     if(video.current) {
       video.current.pause();
       onEdit(sub.startTime);
@@ -42,7 +49,7 @@ export default function EditText({sub, searchSrt, onEdit, video}) {
   }
 
   return (
-    <div>
+    <div className="edit_list__input">
           {!edit ? (
             <div className="srt_container" dangerouslySetInnerHTML={{ __html: sub.text }}></div>
           ) : (
@@ -50,12 +57,8 @@ export default function EditText({sub, searchSrt, onEdit, video}) {
               <input key={i} type="text" value={text} onKeyPress={e => handleKeyPress(e)} onChange={e => updateText(e.target.value, i)} />
             ))
           )}
-          <button onClick={() => toggleEdit()}>toggle</button>
-    <style jsx scoped>{`
-    div {
-      display: grid;
-    }
-    `}</style>
+          <PrimaryButton title={buttonText} onClick={() => toggleEdit()}/>
+
     </div>
   )
 }

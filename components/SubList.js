@@ -2,45 +2,37 @@ import EditText from '../components/EditText'
 import Store from '../components/Store';
 import { useContext, useRef, useEffect, useState } from 'react';
 
-export default function SubList({onPlay, searchSrt, video, onEdit, videoSrc}) {
+export default function SubList({videoJump, searchSrt, video, onEdit, videoSrc}) {
   const { srtObject } = useContext(Store);
   const { currentId } = useContext(Store);
   let [height, setHeight]= useState(null)
   const list = useRef(null);
 
   useEffect(() => {
-    setHeight(window.innerHeight - list.current.offsetTop - 50);
+    handleHeight()
+    window.addEventListener("resize", handleHeight);
+    return () => window.removeEventListener("resize", handleHeight);
   }, [])
 
   useEffect(() => {
-    console.log('hejhej')
-    setHeight(window.innerHeight - list.current.offsetTop - 50);
+    handleHeight();
   }, [videoSrc])
 
+  const handleHeight = () => {
+    setTimeout(() => {
+      setHeight(window.innerHeight - list.current.offsetTop - 50);
+    }, 200);
+  }
+
   return (
-    <ul style={{height: `${height}px`}} ref={list} className="srt_list">
+    <ul style={{height: `${height}px`}} ref={list} className="edit_list">
       {srtObject.map((sub) => (
-        <li key={sub.id} className={sub.id === currentId ? 'active' : null}>
+        <li onClick={() => videoJump(sub.startTime, 0)} key={sub.id} className={sub.id === currentId ? 'edit_list__active' : null}>
+          <p>Från: {sub.startTime}</p>
+          <p>Till: {sub.endTime}</p>
           <EditText searchSrt={searchSrt} sub={sub} onEdit={onEdit} video={video} />
-          <button onClick={() => onPlay(sub.startTime)}>
-            {sub.id}: {sub.startTime}
-          </button>
         </li>
       ))}
-    <style jsx scoped>{`
-    .srt_list {
-      width: 100%;
-      overflow-y: scroll;
-      padding-bottom: 100px;
-      .srt_container {
-        display: flex;
-        flex-direction: column;
-      }
-      .active {
-        border: 1px solid blue;
-      }
-    }
-    `}</style>
     </ul>
   )
 }

@@ -14,34 +14,14 @@ const [type, setType] = useState();
   }, [videoSrc]);
 
   return(
-    <div className="video_wrapper">
-      <div id="subtitles" className="subtitles"></div>
+    <div className="edit_video">
+      <div id="subtitles" className="edit_video__subtitles"></div>
       <video
         onTimeUpdate={(e) => searchSrt(e.target.currentTime)}
         ref={video}
         src={URL.createObjectURL(videoSrc)}>
         <source src={URL.createObjectURL(videoSrc)} type={`video/${type}`}></source>
       </video>
-    <style jsx scoped>{`
-    .video_wrapper {
-      width: 100%;
-      position: relative;
-      video {
-        width: 100%;
-      }
-      .subtitles {
-        position: absolute;
-        bottom: 30px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        width: 100%;
-        i {
-          color: yellow;
-        }
-      }
-    }
-    `}</style>
     </div>
   )
 }
