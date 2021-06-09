@@ -20,7 +20,7 @@ export default function SubList({videoJump, searchSrt, video, onEdit, videoSrc})
 
   const handleHeight = () => {
     setTimeout(() => {
-      setHeight(window.innerHeight - list.current.offsetTop - 50);
+      setHeight(window.innerHeight - list.current.offsetTop - 10);
     }, 200);
   }
 

@@ -137,6 +137,7 @@ export default function Edit() {
       </Head>
 
       <main className="edit">
+        <img onClick={parseSrt} className="edit_download" alt="download" src="/download-cloud.svg" />
         {videoSrc ? (
           <Video video={video} searchSrt={searchSrt} videoSrc={videoSrc}/>
         ) : (
@@ -154,7 +155,7 @@ export default function Edit() {
           <SubList srtObject={srtObject} videoSrc={videoSrc} searchSrt={searchSrt} videoJump={videoJump} onEdit={onEdit} video={video} /> 
         )}
         {video.current && (
-          <Controls isPlaying={isPlaying} prevSub={prevSub} playPause={playPause} nextSub={nextSub} parseSrt={parseSrt} video={video} mirrorTime={mirrorTime} handleSliderChange={handleSliderChange} />
+          <Controls isPlaying={isPlaying} prevSub={prevSub} playPause={playPause} nextSub={nextSub} video={video} mirrorTime={mirrorTime} handleSliderChange={handleSliderChange} />
         )}
       </main>
     </div>
