@@ -1,0 +1,86 @@
+.index {
+  @include margin(10, 0);
+  display: grid;
+  grid-gap: $grid * 10px;
+  @include padding(1, 1);
+  grid-template-areas: 
+                      "hero"
+                      "label"
+                      "img"
+                      "trust";
+  @include tablet {
+    @include padding(1, 10);
+    grid-gap: 0;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas: 
+                      "hero hero"
+                      "label img"
+                      "trust trust";
+    }
+  @include desktop {
+    grid-template-areas: 
+                      "hero img"
+                      "label img"
+                      "trust trust";
+    }
+  > div, > label {
+    @include flex-center;
+  }
+  &_hero {
+    h1 {
+      max-width: 600px;
+      @include padding(0, 2);
+      @include tablet {
+        @include padding(0, 0);
+      }
+    }
+    grid-area: hero;
+  }
+  &_label {
+    grid-area: label;
+    @include desktop {
+      justify-content: flex-start !important;
+      align-items: flex-start !important;
+    }
+    button {
+      pointer-events: none;
+      background-color: $blue;
+      color: #fff;
+    }
+    input {
+      display: none;
+    }
+  }
+  &_illustration {
+    grid-area: img;
+    @include padding(6, 6);
+    @include tablet {
+      @include padding(0, 3);
+    }
+    img {
+      width: 100%;
+      max-width: 600px;
+    }
+  }
+  &_trust {
+    grid-area: trust;
+    @include desktop {
+      align-items: flex-start !important;
+    }
+    ul {
+      @include tablet {
+        @include flex-space;
+        li {
+          @include margin(0, 2);
+        }
+      }
+      li {
+        display: flex;
+        img {
+          width: 24px;
+          @include margin(0, 2);
+        }
+      }
+    }
+  }
+}

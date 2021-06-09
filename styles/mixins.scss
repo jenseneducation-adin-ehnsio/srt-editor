@@ -5,3 +5,20 @@
 @mixin margin($h, $v) {
   margin: $grid * $h + px $grid * $v + px !important;
 }
+
+@mixin flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@mixin flex-space {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+@mixin flex-column {
+  display: flex;
+  flex-direction: column;
+}

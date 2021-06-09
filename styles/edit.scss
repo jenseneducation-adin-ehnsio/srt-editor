@@ -1,0 +1,17 @@
+.edit {
+  @include padding(1, 1);
+  &_add-video {
+    width: 100%;
+    @include margin(4, 0);
+    @include flex-center;
+    input {
+      display: none;
+    }
+    button {
+      pointer-events: none;
+      color: $blue;
+      border: 2px solid $blue;
+      background-color: transparent;
+    }
+  }
+}

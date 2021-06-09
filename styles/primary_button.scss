@@ -1,0 +1,9 @@
+.primary_button {
+  @include padding(2, 6);
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  border-radius: $grid * 6 + px;
+  border: none;
+  text-transform: uppercase;
+}

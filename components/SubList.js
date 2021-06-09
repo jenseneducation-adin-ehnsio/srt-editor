@@ -1,21 +1,26 @@
 import EditText from '../components/EditText'
 import Store from '../components/Store';
-import { useContext, useRef, useEffect } from 'react';
+import { useContext, useRef, useEffect, useState } from 'react';
 
-export default function SubList({onPlay, searchSrt, video, onEdit}) {
+export default function SubList({onPlay, searchSrt, video, onEdit, videoSrc}) {
   const { srtObject } = useContext(Store);
   const { currentId } = useContext(Store);
+  let [height, setHeight]= useState(null)
   const list = useRef(null);
 
   useEffect(() => {
-    console.log(currentId)
-    console.log(list)
-  }, [currentId]);
+    setHeight(window.innerHeight - list.current.offsetTop - 50);
+  }, [])
+
+  useEffect(() => {
+    console.log('hejhej')
+    setHeight(window.innerHeight - list.current.offsetTop - 50);
+  }, [videoSrc])
 
   return (
-    <ul ref={list} className="srt_list">
+    <ul style={{height: `${height}px`}} ref={list} className="srt_list">
       {srtObject.map((sub) => (
-        <li  key={sub.id} className={sub.id === currentId ? 'active' : null}>
+        <li key={sub.id} className={sub.id === currentId ? 'active' : null}>
           <EditText searchSrt={searchSrt} sub={sub} onEdit={onEdit} video={video} />
           <button onClick={() => onPlay(sub.startTime)}>
             {sub.id}: {sub.startTime}
@@ -25,9 +30,8 @@ export default function SubList({onPlay, searchSrt, video, onEdit}) {
     <style jsx scoped>{`
     .srt_list {
       width: 100%;
-      height: calc(100vh - 320px);
-      padding-bottom: 100px;
       overflow-y: scroll;
+      padding-bottom: 100px;
       .srt_container {
         display: flex;
         flex-direction: column;

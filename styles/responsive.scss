@@ -18,12 +18,8 @@
       max-width: 100vw;
       width: 100vw;
       min-height: 100vh;
-      display: flex;
-      align-items: center;
-      flex-direction: column;
-      padding: 10px;
       @include desktop {
-        max-width: 1152px;
+        max-width: 1400px;
       }
     }
   }

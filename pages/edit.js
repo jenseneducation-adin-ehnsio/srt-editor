@@ -3,7 +3,9 @@ import { useState, useRef, useContext, useEffect } from 'react';
 import Store from '../components/Store';
 import SubList from '../components/SubList';
 import Video from '../components/Video';
+import Controls from '../components/Controls';
 import parser from 'subtitles-parser';
+import PrimaryButton from '../components/PrimaryButton'
 
 export default function Edit() {
   const [videoSrc, setVideo] = useState();
@@ -137,91 +139,27 @@ export default function Edit() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main>
+      <main className="edit">
         {videoSrc ? (
           <Video video={video} searchSrt={searchSrt} videoSrc={videoSrc}/>
         ) : (
-          <label htmlFor="upload">
-            <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-              <path
-                fill="#D0E2FF"
-                d="M51.2,-67.8C63.2,-61.7,67.7,-42.6,70.7,-25C73.7,-7.3,75.3,8.8,71.4,23.9C67.5,39,58.1,53.1,45.3,63.3C32.5,73.5,16.3,79.8,2.8,76C-10.7,72.1,-21.4,58.2,-34.4,48C-47.3,37.9,-62.5,31.6,-69.7,20.1C-76.9,8.7,-76.2,-7.9,-68.7,-19.6C-61.1,-31.3,-46.9,-38.1,-34.3,-44C-21.7,-49.8,-10.9,-54.8,4.4,-60.8C19.6,-66.8,39.2,-73.8,51.2,-67.8Z"
-                transform="translate(100 100)"
-              />
-            </svg>
+          <label className="edit_add-video" htmlFor="upload">
+            <PrimaryButton title={'Lägg till film'} />
             <input
               id="upload"
               accept="video/*"
               type="file"
               onChange={(e) => setVideo(e.target.files?.item(0))}
             />
-            <h3>Add Video +</h3>
           </label>
         )}
         {srtObject && (
-          <SubList srtObject={srtObject} searchSrt={searchSrt} onPlay={onPlay} onEdit={onEdit} video={video} /> 
+          <SubList srtObject={srtObject} videoSrc={videoSrc} searchSrt={searchSrt} onPlay={onPlay} onEdit={onEdit} video={video} /> 
         )}
         {video.current && (
-          <div className="controls">
-            <div className="play_pause">
-              <p onClick={prevSub}>prev</p>
-              {!isPlaying ? (
-                <p onClick={playPause}>play</p>
-              ) : (
-                <p onClick={playPause}>pause</p>
-              )}
-              <p onClick={nextSub}>next</p>
-            </div>
-            <button onClick={parseSrt}>download</button>
-            <input 
-            type="range"
-            min="0" max={video.current.duration || "100"}
-            value={mirrorTime}
-            onChange={(e) => handleSliderChange(e)}
-            step="0.1"/>
-          </div>
+          <Controls isPlaying={isPlaying} prevSub={prevSub} playPause={playPause} nextSub={nextSub} parseSrt={parseSrt} video={video} mirrorTime={mirrorTime} handleSliderChange={handleSliderChange} />
         )}
       </main>
-
-      <style jsx scoped>{`
-        main {
-          .controls {
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            padding: 10px;
-            background-color: white;
-            .play_pause {
-              height: 60px;
-              width: 100%;
-              display: flex;
-              justify-content: space-evenly;
-              align-items: center;
-            }
-            input {
-              width: 100%;
-            }
-          }
-          label {
-            position: relative;
-            svg {
-              width: 100%;
-            }
-            input {
-              display: none;
-            }
-            h3 {
-              position: absolute;
-              margin: 0;
-              top: 50%;
-              left: 50%;
-              transform: translate(-50%, -50%);
-              text-align: center;
-              white-space: nowrap;
-            }
-          }
-        }
-      `}</style>
     </div>
   );
 }

@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import parser from 'subtitles-parser';
 import { useContext } from 'react';
 import Store from '../components/Store';
+import PrimaryButton from '../components/PrimaryButton'
 
 export default function Home() {
   const [srt, setSrt] = useState();
@@ -28,50 +29,29 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main>
-        <h1>Redigera dina undertexter</h1>
-        <label htmlFor="upload">
-          <img src="/blob.svg" alt="blob" />
+      <main className="index">
+        <div className="index_hero">
+          <h1>Redigera dina undertexter online</h1>
+        </div>
+        <label className="index_label" htmlFor="upload">
+          <PrimaryButton title={'Välj textfil'} />
           <input
             id="upload"
             accept=".srt"
             type="file"
             onChange={(e) => setSrt(e.target.files?.item(0))}
           />
-          <h3>Lägg till textfil</h3>
         </label>
+        <div className="index_illustration">
+          <img src="/images/edit.png" alt="illustration" />
+        </div>
+        <div className="index_trust">
+          <ul>
+            <li><img src="/check.svg" alt="check.svg"/><h3>Helt kostnadsfritt</h3></li>
+            <li><img src="/check.svg" alt="check.svg"/><h3>Enkelt verktyg</h3></li>
+          </ul>
+        </div>
       </main>
-
-      <style jsx scoped>{`
-        main {
-          input {
-            width: 200px;
-          }
-          video {
-            width: 100%;
-          }
-          label {
-            position: relative;
-            width: 100%;
-            max-width: 400px;
-            img {
-              width: 100%;
-            }
-            input {
-              display: none;
-            }
-            h3 {
-              position: absolute;
-              margin: 0;
-              top: 50%;
-              left: 50%;
-              transform: translate(-50%, -50%);
-              text-align: center;
-              white-space: nowrap;
-            }
-          }
-        }
-      `}</style>
     </div>
   );
 }
