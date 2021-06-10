@@ -12,7 +12,7 @@ export default function Controls({isPlaying, video, prevSub, nextSub, playPause,
         )}
         <img onClick={nextSub} src="/chevron-right.svg" alt="next"/>
       </div>
-      <input type="range" min="0" max={video.current.duration || "100"} value={mirrorTime}
+      <input type="range" min="0" max={video.current.duration || "100"} value={mirrorTime || 0}
       onChange={(e) => handleSliderChange(e)} step="0.1"/>
     </div>
   )
